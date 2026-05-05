@@ -5,8 +5,6 @@ import axiosInstance from "../../utils/axioInstance";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import RecentTasks from "../../components/RecentTasks";
-import CustomPieChart from "../../components/CustomPieChart";
-import CustomBarChart from "../../components/CustomBarChart";
 
 const COLORS = ["#FF6384", "#36A2EB", "#FFCE56"];
 
@@ -14,32 +12,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const { currentUser } = useSelector((state) => state.user);
-
+  const [tasksPerUser, setTasksPerUser] = useState([]);
+  const [overdueTasks, setOverdueTasks] = useState(0);
   const [dashboardData, setDashboardData] = useState([]);
-  const [pieChartData, setPieChartData] = useState([]);
-  const [barChartData, setBarChartData] = useState([]);
-
-  // prepare data for pie chart
-  const prepareChartData = (data) => {
-    const taskDistribution = data?.taskDistribution || {};
-    const taskPriorityLevels = data?.taskPriorityLevel || {};
-
-    const taskDistributionData = [
-      { status: "Pending", count: taskDistribution?.Pending || 0 },
-      { status: "In Progress", count: taskDistribution?.InProgress || 0 },
-      { status: "Completed", count: taskDistribution?.Completed || 0 },
-    ];
-
-    setPieChartData(taskDistributionData);
-
-    const priorityLevelData = [
-      { priority: "Low", count: taskPriorityLevels?.Low || 0 },
-      { priority: "Medium", count: taskPriorityLevels?.Medium || 0 },
-      { priority: "High", count: taskPriorityLevels?.High || 0 },
-    ];
-
-    setBarChartData(priorityLevelData);
-  };
 
   const getDashboardData = async () => {
     try {
@@ -47,6 +22,8 @@ const Dashboard = () => {
 
       if (response.data) {
         setDashboardData(response.data);
+        setTasksPerUser(response.data?.tasksPerUser || []);
+        setOverdueTasks(response.data?.statistics?.overdueTasks || 0);
         prepareChartData(response.data?.charts || null);
       }
     } catch (error) {
@@ -67,7 +44,7 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <h2 className="text-3xl font-bold tracking-wide">
-                Welcome back, {currentUser?.name} 👋
+                Welcome back, {currentUser?.name}
               </h2>
 
               <p className="text-indigo-100 mt-2 text-sm">
@@ -120,30 +97,24 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Task Distribution
-            </h3>
+        <div className=" bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-lg">
+          <p className="text-lg font-semibold text-white">Overdue Tasks</p>
+          <h3 className="text-3xl font-bold text-white mt-2">{overdueTasks}</h3>
+        </div>
 
-            <div className="h-64">
-              <CustomPieChart
-                data={pieChartData}
-                label="Total Balance"
-                colors={COLORS}
-              />
-            </div>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Task Priority Levels
-            </h3>
-
-            <div className="h-64">
-              <CustomBarChart data={barChartData} />
-            </div>
+        <div className=" bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-lg">
+          <h3 className="text-lg font-semibold text-white">Tasks per User</h3>{" "}
+          <hr className="border-0" />
+          <div className="mt-2 space-y-2">
+            {tasksPerUser.map((u, idx) => (
+              <div
+                key={idx}
+                className="flex justify-between text-white text-sm"
+              >
+                <span>{u.user}</span>
+                <span className="font-semibold">{u.count}</span>
+              </div>
+            ))}
           </div>
         </div>
 

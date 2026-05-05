@@ -4,7 +4,7 @@ import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
-  const { name, email, password, profileImageUrl, adminJoinCode } = req.body;
+  const { name, email, password, profileImageUrl, role } = req.body;
 
   if (
     !name ||
@@ -24,12 +24,8 @@ export const signup = async (req, res, next) => {
     return next(errorHandler(400, "User already exists"));
   }
 
-  //   check user role
-  let role = "user";
-
-  if (adminJoinCode && adminJoinCode === process.env.ADMIN_JOIN_CODE) {
-    role = "admin";
-  }
+  // Default role to "user" if not provided
+  const userRole = role === "admin" ? "admin" : "user";
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
@@ -38,7 +34,7 @@ export const signup = async (req, res, next) => {
     email,
     password: hashedPassword,
     profileImageUrl,
-    role,
+    role: userRole,
   });
 
   try {

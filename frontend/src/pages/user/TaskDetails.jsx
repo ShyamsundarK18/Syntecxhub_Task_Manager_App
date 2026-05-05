@@ -145,26 +145,6 @@ const TaskDetails = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Attachments */}
-              {task?.attachments?.length > 0 && (
-                <div className="mt-8">
-                  <label className="text-xs font-medium text-gray-400">
-                    Attachments
-                  </label>
-
-                  <div className="mt-3 space-y-2">
-                    {task?.attachments?.map((link, index) => (
-                      <Attachment
-                        key={`link_${index}`}
-                        link={link}
-                        index={index}
-                        onClick={() => handleLinkClick(link)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -203,25 +183,6 @@ const TodoCheckList = ({ text, isChecked, onChange }) => {
       >
         {text}
       </p>
-    </div>
-  );
-};
-
-const Attachment = ({ link, index, onClick }) => {
-  return (
-    <div
-      className="flex justify-between items-center bg-white/5 border border-white/10 px-4 py-3 rounded-xl cursor-pointer hover:bg-white/10 transition"
-      onClick={onClick}
-    >
-      <div className="flex items-center gap-3 flex-1">
-        <span className="text-xs text-gray-500 font-semibold">
-          {index < 9 ? `0${index + 1}` : index + 1}
-        </span>
-
-        <p className="text-xs text-gray-200 break-all">{link}</p>
-      </div>
-
-      <FaExternalLinkAlt className="text-gray-400 text-sm" />
     </div>
   );
 };

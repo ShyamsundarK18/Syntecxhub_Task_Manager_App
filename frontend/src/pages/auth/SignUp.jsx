@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AuthLayout from "../../components/AuthLayout";
 import { FaEyeSlash, FaPeopleGroup } from "react-icons/fa6";
 import { FaEye } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,8 +16,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
-  const [adminInviteToken, setAdminInviteToken] = useState("");
-  const [showAdminInviteToken, setShowAdminInviteToken] = useState(false);
+  const [role, setRole] = useState("user"); // default to "user"
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,7 +53,7 @@ const SignUp = () => {
         email,
         password,
         profileImageUrl,
-        adminJoinCode: adminInviteToken,
+        role,
       });
 
       if (response.data) {
@@ -134,13 +132,29 @@ const SignUp = () => {
               </button>
             </div>
 
-            <input
-              type="text"
-              placeholder="Admin Invite Token"
-              value={adminInviteToken}
-              onChange={(e) => setAdminInviteToken(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/20 text-white border border-white/30 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
+            <div className="flex gap-4">
+              <div
+                onClick={() => setRole("user")}
+                className={`flex-1 cursor-pointer px-4 py-3 rounded-xl border 
+      ${role === "user" ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white" : "bg-white/20 text-gray-300 border-white/30"} 
+      text-center font-semibold transition`}
+              >
+                User
+              </div>
+
+              <div
+                onClick={() => setRole("admin")}
+                className={`flex-1 cursor-pointer px-4 py-3 rounded-xl border 
+    ${
+      role === "admin"
+        ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-indigo-500"
+        : "bg-white/20 text-gray-300 border-white/30"
+    } 
+    text-center font-semibold transition`}
+              >
+                Admin
+              </div>
+            </div>
 
             {error && (
               <p className="text-red-400 text-sm text-center">{error}</p>

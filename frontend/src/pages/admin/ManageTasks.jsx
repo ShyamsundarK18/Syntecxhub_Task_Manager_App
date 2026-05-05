@@ -12,7 +12,7 @@ const ManageTasks = () => {
   const [tabs, setTabs] = useState([]);
   const [filterStatus, setFilterStatus] = useState("All");
 
-  console.log(tabs);
+  // console.log(tabs);
 
   const navigate = useNavigate();
 
@@ -49,31 +49,6 @@ const ManageTasks = () => {
     navigate("/admin/create-task", { state: { taskId: taskData._id } });
   };
 
-  const handleDownloadReport = async () => {
-    try {
-      const response = await axiosInstance.get("/reports/export/tasks", {
-        responseType: "blob",
-      });
-
-      // create a url for the blob
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-
-      link.href = url;
-
-      link.setAttribute("download", "tasks_details.xlsx");
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.log("Error downloading task-details report: ", error);
-      toast.error("Error downloading task-details report. Please try again!");
-    }
-  };
-
   useEffect(() => {
     getAllTasks(filterStatus);
 
@@ -88,13 +63,6 @@ const ManageTasks = () => {
             <h2 className="text-3xl font-bold text-white tracking-wide">
               Task Management
             </h2>{" "}
-            <button
-              className="hidden md:flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:opacity-90 active:scale-95"
-              onClick={handleDownloadReport}
-              type="button"
-            >
-              Download Report
-            </button>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
@@ -103,14 +71,6 @@ const ManageTasks = () => {
               activeTab={filterStatus}
               setActiveTab={setFilterStatus}
             />
-
-            {/* <button
-              className="hidden md:flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:opacity-90 active:scale-95"
-              onClick={handleDownloadReport}
-              type="button"
-            >
-              <span>Download</span>
-            </button> */}
           </div>
         </div>
 
@@ -126,7 +86,6 @@ const ManageTasks = () => {
               createdAt={item.createdAt}
               dueDate={item.dueDate}
               assignedTo={item.assignedTo?.map((item) => item.profileImageUrl)}
-              attachmentCount={item.attachments?.length || 0}
               completedTodoCount={item.completedCount || 0}
               todoChecklist={item.todoChecklist || []}
               onClick={() => handleClick(item)}

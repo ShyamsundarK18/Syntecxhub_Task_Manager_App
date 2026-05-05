@@ -100,7 +100,6 @@ const MyTask = () => {
                   assignedTo={item.assignedTo?.map(
                     (item) => item.profileImageUrl,
                   )}
-                  attachmentCount={item.attachments?.length || 0}
                   completedTodoCount={item.completedCount || 0}
                   todoChecklist={item.todoChecklist || []}
                   onClick={() => handleClick(item._id)}

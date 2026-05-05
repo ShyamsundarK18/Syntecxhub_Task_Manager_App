@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import Progress from "./Progress";
 import moment from "moment";
 import AvatarGroup from "./AvatarGroup";
-import { FaFileLines } from "react-icons/fa6";
 
 const TaskCard = memo(
   ({
@@ -14,7 +13,6 @@ const TaskCard = memo(
     createdAt,
     dueDate,
     assignedTo,
-    attachmentCount,
     completedTodoCount,
     todoChecklist,
     onClick,
@@ -97,13 +95,6 @@ const TaskCard = memo(
 
         <div className="flex justify-between items-center mt-4">
           <AvatarGroup avatars={assignedTo || []} />
-
-          {attachmentCount > 0 && (
-            <div className="flex items-center gap-2 bg-indigo-500/20 px-3 py-1 rounded-lg">
-              <FaFileLines className="text-indigo-400 text-sm" />
-              <span className="text-xs text-white">{attachmentCount}</span>
-            </div>
-          )}
         </div>
       </div>
     );

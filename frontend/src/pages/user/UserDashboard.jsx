@@ -5,8 +5,6 @@ import axiosInstance from "../../utils/axioInstance";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import RecentTasks from "../../components/RecentTasks";
-import CustomPieChart from "../../components/CustomPieChart";
-import CustomBarChart from "../../components/CustomBarChart";
 
 const COLORS = ["#FF6384", "#36A2EB", "#FFCE56"];
 
@@ -16,30 +14,6 @@ const UserDashboard = () => {
   const { currentUser } = useSelector((state) => state.user);
 
   const [dashboardData, setDashboardData] = useState([]);
-  const [pieChartData, setPieChartData] = useState([]);
-  const [barChartData, setBarChartData] = useState([]);
-
-  // prepare data for pie chart
-  const prepareChartData = (data) => {
-    const taskDistribution = data?.taskDistribution || {};
-    const taskPriorityLevels = data?.taskPriorityLevel || {};
-
-    const taskDistributionData = [
-      { status: "Pending", count: taskDistribution?.Pending || 0 },
-      { status: "In Progress", count: taskDistribution?.InProgress || 0 },
-      { status: "Completed", count: taskDistribution?.Completed || 0 },
-    ];
-
-    setPieChartData(taskDistributionData);
-
-    const priorityLevelData = [
-      { priority: "Low", count: taskPriorityLevels?.Low || 0 },
-      { priority: "Medium", count: taskPriorityLevels?.Medium || 0 },
-      { priority: "High", count: taskPriorityLevels?.High || 0 },
-    ];
-
-    setBarChartData(priorityLevelData);
-  };
 
   const getDashboardData = async () => {
     try {
@@ -111,33 +85,6 @@ const UserDashboard = () => {
             </div>
           </div>
         )}
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Task Distribution
-            </h3>
-
-            <div className="h-64">
-              <CustomPieChart
-                data={pieChartData}
-                label="Total Balance"
-                colors={COLORS}
-              />
-            </div>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Task Priority Levels
-            </h3>
-
-            <div className="h-64">
-              <CustomBarChart data={barChartData} />
-            </div>
-          </div>
-        </div>
 
         {/* Recent Task Section */}
         <RecentTasks tasks={dashboardData?.recentTasks} />

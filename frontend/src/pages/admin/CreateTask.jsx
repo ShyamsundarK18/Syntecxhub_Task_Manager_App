@@ -7,7 +7,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SelectedUsers from "../../components/SelectedUsers";
 import TodoListInput from "../../components/TodoListInput";
-import AddAttachmentsInput from "../../components/AddAttachmentsInput";
 import axiosInstance from "../../utils/axioInstance";
 import moment from "moment";
 import toast from "react-hot-toast";
@@ -27,7 +26,6 @@ const CreateTask = () => {
     dueDate: null,
     assignedTo: [],
     todoChecklist: [],
-    attachments: [],
   });
 
   const [currentTask, setCurrentTask] = useState(null);
@@ -53,7 +51,6 @@ const CreateTask = () => {
       dueDate: null,
       assignedTo: [],
       todoChecklist: [],
-      attachments: [],
     });
   };
 
@@ -169,7 +166,7 @@ const CreateTask = () => {
           assignedTo: taskInfo?.assignedTo?.map((item) => item?._id || []),
           todoChecklist:
             taskInfo?.todoChecklist?.map((item) => item?.text) || [],
-          attachments: taskInfo?.attachments || [],
+          //attachments: taskInfo?.attachments || [],
         }));
       }
     } catch (error) {
@@ -315,19 +312,6 @@ const CreateTask = () => {
                   todoList={taskData?.todoChecklist}
                   setTodoList={(value) =>
                     handleValueChange("todoChecklist", value)
-                  }
-                />
-              </div>
-
-              <div className="mt-3">
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Add Attachments
-                </label>
-
-                <AddAttachmentsInput
-                  attachments={taskData?.attachments}
-                  setAttachments={(value) =>
-                    handleValueChange("attachments", value)
                   }
                 />
               </div>

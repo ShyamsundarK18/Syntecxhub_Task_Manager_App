@@ -20,28 +20,14 @@ const ManageUsers = () => {
     }
   };
 
-  const handleDownloadReport = async () => {
+  const handleRemoveUser = async (userId) => {
     try {
-      const response = await axiosInstance.get("/reports/export/users", {
-        responseType: "blob",
-      });
-
-      // create a url for the blob
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-
-      link.href = url;
-
-      link.setAttribute("download", "user_details.xlsx");
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      await axiosInstance.delete(`/users/${userId}`);
+      toast.success("User removed successfully!");
+      setAllUsers((prev) => prev.filter((user) => user._id !== userId));
     } catch (error) {
-      console.log("Error downloading user-details report: ", error);
-      toast.error("Error downloading user-details report. Please try again!");
+      toast.error("Failed to remove user");
+      console.log("Error removing user: ", error);
     }
   };
 
@@ -63,20 +49,15 @@ const ManageUsers = () => {
               Manage and monitor your team performance.
             </p>
           </div>
-
-          <button
-            type="button"
-            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl shadow-lg hover:opacity-90 transition duration-200"
-            onClick={handleDownloadReport}
-          >
-            <FaFileAlt className="text-lg" />
-            Download Report
-          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           {allUsers?.map((user) => (
-            <UserCard key={user._id} userInfo={user} />
+            <UserCard
+              key={user._id}
+              userInfo={user}
+              onRemove={handleRemoveUser}
+            />
           ))}
         </div>
       </div>

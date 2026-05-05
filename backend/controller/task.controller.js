@@ -10,7 +10,6 @@ export const createTask = async (req, res, next) => {
       priority,
       dueDate,
       assignedTo,
-      attachments,
       todoChecklist,
     } = req.body
 
@@ -24,7 +23,6 @@ export const createTask = async (req, res, next) => {
       priority,
       dueDate,
       assignedTo,
-      attachments,
       todoChecklist,
       createdBy: req.user.id,
     })
@@ -139,7 +137,7 @@ export const updateTask = async (req, res, next) => {
     task.priority = req.body.priority || task.priority
     task.dueDate = req.body.dueDate || task.dueDate
     task.todoChecklist = req.body.todoChecklist || task.todoChecklist
-    task.attachments = req.body.attachments || task.attachments
+    // task.attachments = req.body.attachments || task.attachments
 
     if (req.body.assignedTo) {
       if (!Array.isArray(req.body.assignedTo)) {
@@ -308,6 +306,38 @@ export const getDashboardData = async (req, res, next) => {
       return acc
     }, {})
 
+    // Tasks per user aggregation
+    const tasksPerUserRaw = await Task.aggregate([
+      {
+        $unwind: "$assignedTo", // since assignedTo is an array
+      },
+      {
+        $lookup: {
+          from: "users", // collection name for users
+          localField: "assignedTo",
+          foreignField: "_id",
+          as: "userInfo",
+        },
+      },
+      {
+        $unwind: "$userInfo",
+      },
+      {
+        $group: {
+          _id: "$userInfo.name",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          user: "$_id",
+          count: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+
     // Fetch recent 10 tasks
     const recentTasks = await Task.find()
       .sort({ createdAt: -1 })
@@ -325,7 +355,7 @@ export const getDashboardData = async (req, res, next) => {
         taskDistribution,
         taskPriorityLevel,
       },
-
+      tasksPerUser: tasksPerUserRaw,
       recentTasks,
     })
   } catch (error) {

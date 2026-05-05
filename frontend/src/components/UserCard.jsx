@@ -1,8 +1,17 @@
 import React from "react";
+import { FaTrash } from "react-icons/fa";
 
-const UserCard = ({ userInfo }) => {
+const UserCard = ({ userInfo, onRemove }) => {
   return (
-    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 shadow-lg transition-all duration-200 hover:bg-white/15">
+    <div className=" relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 shadow-lg transition-all duration-200 hover:bg-white/15">
+      {/* Delete icon button in top-right */}
+      <button
+        onClick={() => onRemove(userInfo._id)}
+        className="absolute top-3 right-3 text-red-500 hover:text-red-700 transition"
+        title="Remove User"
+      >
+        <FaTrash size={18} />
+      </button>
       <div className="flex items-center gap-3">
         <img
           src={userInfo?.profileImageUrl}
